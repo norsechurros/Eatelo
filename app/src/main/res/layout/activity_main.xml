@@ -1,6 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+<!-- First Page -->
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige">
+
+    <TextView
+        android:id="@+id/tagline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/red_hat_display"
+        android:text="Restaurant\nReviews\nReinvented"
+        android:textSize="50sp"
+        android:textColor="@color/black"
+        android:shadowColor="#80000000"
+        android:shadowRadius="10"
+        android:shadowDx="10"
+        android:shadowDy="20"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
+
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tagline"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="-61dp"
+        android:src="@drawable/logo" />
+
+    <ImageView
+        android:id="@+id/swipeUp"
+        android:layout_width="match_parent"
+        android:layout_height="269dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="145dp"
+        android:src="@drawable/food_home" />
+
+    <!-- Swipe Up Text -->
+    <View
+        android:id="@+id/rectangle"
+        android:layout_width="420dp"
+        android:layout_height="450dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="-380dp"
+        android:background="@drawable/rounded_rectangle"/>
+
+    <TextView
+        android:id="@+id/swipeUpText"
+        android:textColor="@color/accent_red"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/rectangle"
+        android:text="^ Swipe Up ^"
+        android:textSize="22sp" />
+
+</RelativeLayout>
