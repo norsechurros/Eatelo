@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/main"
+
+android:background="@color/beige"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity">
+
+
+<TextView
+    android:id="@+id/textView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Tailor Your Experience"
+
+    tools:layout_editor_absoluteX="25dp"
+    tools:layout_editor_absoluteY="138dp"
+    tools:textSize="30dp" />
+
+<TextView
+    android:id="@+id/textView2"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="What do you look the most in a restaurant?"
+    tools:layout_editor_absoluteX="25dp"
+    tools:layout_editor_absoluteY="189dp" />
+
+<Button
+    android:id="@+id/button3"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Ambience"
+    android:backgroundTint="@color/red"
+    tools:layout_editor_absoluteX="38dp"
+    tools:layout_editor_absoluteY="252dp" />
+
+<Button
+    android:id="@+id/button4"
+    android:backgroundTint="@color/red"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="food quality"
+    tools:layout_editor_absoluteX="158dp"
+    tools:layout_editor_absoluteY="254dp" />
+
+<Button
+    android:id="@+id/button5"
+    android:backgroundTint="@color/red"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Price"
+    tools:layout_editor_absoluteX="43dp"
+    tools:layout_editor_absoluteY="311dp" />
+
+<Button
+    android:id="@+id/button6"
+    android:backgroundTint="@color/red"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Location"
+    tools:layout_editor_absoluteX="140dp"
+    tools:layout_editor_absoluteY="309dp" />
+
+<Button
+    android:id="@+id/button7"
+    android:backgroundTint="@color/red"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Service"
+    tools:layout_editor_absoluteX="248dp"
+    tools:layout_editor_absoluteY="310dp" />
+
+<Button
+    android:id="@+id/button8"
+    android:backgroundTint="@color/red"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Button"
+    tools:layout_editor_absoluteX="46dp"
+    tools:layout_editor_absoluteY="380dp" />
+
+<Button
+    android:id="@+id/button9"
+    android:backgroundTint="@color/red"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Button"
+    tools:layout_editor_absoluteX="149dp"
+    tools:layout_editor_absoluteY="379dp" />
+
+<Button
+    android:id="@+id/button10"
+    android:backgroundTint="@color/red"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Button"
+    tools:layout_editor_absoluteX="43dp"
+    tools:layout_editor_absoluteY="437dp" />
+
+<Button
+    android:id="@+id/button11"
+    android:backgroundTint="@color/red"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Button"
+    tools:layout_editor_absoluteX="158dp"
+    tools:layout_editor_absoluteY="434dp" />
+
+<Button
+    android:id="@+id/button12"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Button"
+    tools:layout_editor_absoluteX="50dp"
+    tools:layout_editor_absoluteY="503dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
