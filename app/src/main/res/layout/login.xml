@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="220dp"
+        android:layout_height="106dp"
+        android:layout_marginTop="-10dp"
+        android:layout_marginLeft="-40dp"
+        android:src="@drawable/logo" />
+
+
+    <View
+        android:id="@+id/rectangle"
+        android:layout_centerHorizontal="true"
+        android:layout_width="330dp"
+        android:layout_height="450dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="174dp"
+        android:background="@drawable/rounded_rectangle" />
+    <TextView
+        android:id="@+id/signinText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_above="@id/rectangle"
+        android:layout_marginBottom="-100dp"
+        android:text="Sign in"
+        android:textColor="@color/white"
+        android:textSize="40sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/taglineText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="100dp"
+        android:text="Restaurants Reviews Reinvented"
+        android:textColor="@color/accent_red"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:layout_marginHorizontal="40dp"
+        android:padding="8dp"
+        android:textSize="25sp"
+        android:layout_centerHorizontal="true"
+        android:textColorHint="@color/black"
+        android:id="@+id/phoneInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:hint="Phone number"
+        android:layout_below="@id/signinText"
+        android:layout_marginTop="150dp"
+        />
+
+    <EditText
+        android:layout_marginHorizontal="40dp"
+        android:textSize="25sp"
+        android:textColorHint="@color/black"
+        android:padding="8dp"
+        android:id="@+id/passwordInput"
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:hint="Password"
+        android:layout_centerHorizontal="true"
+        android:inputType="textPassword"
+        android:layout_below="@id/phoneInput"/>
+
+    <Button
+        android:layout_marginHorizontal="40dp"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/loginButton"
+        android:textSize="25sp"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/dark_red"
+        android:layout_below="@id/passwordInput"
+        android:layout_marginTop="50dp"/>
+
+</RelativeLayout>

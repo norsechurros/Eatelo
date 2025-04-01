@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isMoving = false;
 
     // Height threshold to trigger transition from the bottom (e.g., 200 pixels from the bottom)
-    private static final float HEIGHT_THRESHOLD_FROM_BOTTOM = 900;
+    private static final float HEIGHT_THRESHOLD_FROM_BOTTOM = 600;
 
     // Flag to check if transition is triggered
     private boolean transitionTriggered = false;
