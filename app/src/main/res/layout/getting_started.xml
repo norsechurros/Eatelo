@@ -47,6 +47,7 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/signInButton"
         android:textSize="25dp"
+        android:padding="10dp"
         android:textColor="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,6 +59,7 @@
 
     <Button
         android:textSize="25dp"
+        android:padding="10dp"
         android:layout_centerHorizontal="true"
         android:layout_marginHorizontal="15dp"
         android:id="@+id/createAccountButton"

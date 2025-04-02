@@ -11,7 +11,6 @@ public class MainActivity extends AppCompatActivity {
 
     // Declare the rectangle view
     private View rectangleView;
-
     private float dY;
     private float rectanglePreviousY;
     private boolean isMoving = false;
