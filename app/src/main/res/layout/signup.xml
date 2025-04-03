@@ -60,7 +60,9 @@
         android:hint="Name"
         android:layout_below="@id/signupText"
         android:layout_marginTop="130dp"
-        />
+
+        android:imeOptions="actionNext"
+        android:inputType="text" />
     <EditText
         android:layout_marginHorizontal="40dp"
         android:layout_centerHorizontal="true"
@@ -119,7 +121,7 @@
         android:layout_height="wrap_content"
         android:text="Submit"
         android:textColor="@color/white"
-        android:backgroundTint="@color/dark_red"
+        android:backgroundTint="@color/red"
         android:layout_below="@id/passwordconfirmInput"
         android:layout_marginTop="25dp"/>
 
