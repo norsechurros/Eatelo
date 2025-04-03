@@ -4,8 +4,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="beige">#FFEFD5</color>
     <color name="red">#990000</color>
-    <color name="dark_red">#FFEFD5</color>
+    <color name="dark_red">#451813</color>
     <color name="pink">#CF7171</color>
+    <color name="accent_red">#990000</color>
 
 
 </resources>
