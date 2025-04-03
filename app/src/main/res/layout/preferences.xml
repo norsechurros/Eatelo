@@ -1,146 +1,203 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:id="@+id/main"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige">
 
-android:background="@color/beige"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-tools:context=".MainActivity">
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="220dp"
+        android:layout_height="106dp"
+        android:layout_marginTop="-10dp"
+        android:layout_marginLeft="-40dp"
+        android:src="@drawable/logo" />
 
 
+    <!-- Title -->
     <TextView
-        android:id="@+id/tailorYourExp"
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-
-        android:layout_marginTop="138dp"
+        android:layout_below="@id/logo"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
         android:text="Tailor Your Experience"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:textSize="30dp" />
+        android:textSize="24sp"
+        android:textColor="@color/black"
+        android:textStyle="bold" />
 
+    <!-- Subtitle -->
     <TextView
-        android:id="@+id/subTitle"
+        android:id="@+id/subtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="11dp"
+        android:layout_below="@id/title"
+        android:layout_marginTop="5dp"
+        android:layout_centerHorizontal="true"
         android:text="What do you look the most in a restaurant?"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tailorYourExp" />
+        android:textSize="14sp"
+        android:textColor="@color/black" />
 
-    <Button
-        android:id="@+id/ambience"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/preferences_container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="38dp"
-        android:layout_marginTop="44dp"
-        android:backgroundTint="@color/red"
-        android:text="Ambience"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subTitle" />
+        android:layout_below="@id/subtitle"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical"
+        android:gravity="center">
 
-    <Button
-        android:id="@+id/foodqual"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="46dp"
-        android:backgroundTint="@color/red"
-        android:text="food quality"
-        app:layout_constraintStart_toEndOf="@+id/ambience"
-        app:layout_constraintTop_toBottomOf="@+id/subTitle" />
+        <!-- Row 1 (2 buttons) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="43dp"
-        android:layout_marginTop="10dp"
-        android:backgroundTint="@color/red"
-        android:text="Price"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ambience" />
+            <Button
+                android:id="@+id/ambience"
+                style="@style/OutlinedButton"
+                android:layout_height="wrap_content"
+                android:layout_width="114dp"
+                android:layout_margin="8dp"
+                android:text="Ambience" />
 
-    <Button
-        android:id="@+id/location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="9dp"
-        android:layout_marginTop="6dp"
-        android:backgroundTint="@color/red"
-        android:text="Location"
-        app:layout_constraintStart_toEndOf="@+id/price"
-        app:layout_constraintTop_toBottomOf="@+id/foodqual" />
+            <Button
+                android:id="@+id/food_quality"
+                style="@style/OutlinedButton"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Food Quality" />
+        </LinearLayout>
 
-    <Button
-        android:id="@+id/service"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="7dp"
-        android:backgroundTint="@color/red"
-        android:text="Service"
-        app:layout_constraintStart_toEndOf="@+id/location"
-        app:layout_constraintTop_toBottomOf="@+id/foodqual" />
+        <!-- Row 2 (3 buttons) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/hygiene"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="46dp"
-        android:layout_marginTop="21dp"
-        android:backgroundTint="@color/red"
-        android:text="Hygiene"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/price" />
+            <Button
+                android:id="@+id/price"
+                style="@style/OutlinedButton"
+                android:text="Price"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
 
-    <Button
-        android:id="@+id/speedOfService"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="3dp"
-        android:layout_marginTop="21dp"
-        android:backgroundTint="@color/red"
-        android:text="Speed of Service"
-        app:layout_constraintStart_toEndOf="@+id/hygiene"
-        app:layout_constraintTop_toBottomOf="@+id/service" />
+                android:layout_margin="8dp"/>
 
-    <Button
-        android:id="@+id/portionsize"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="43dp"
-        android:layout_marginTop="9dp"
-        android:backgroundTint="@color/red"
-        android:text="Porton Size"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hygiene" />
+            <Button
+                android:id="@+id/location"
+                style="@style/OutlinedButton"
+                android:text="Location"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
 
-    <Button
-        android:id="@+id/avail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="22dp"
-        android:layout_marginTop="10dp"
-        android:backgroundTint="@color/red"
-        android:text="Availability"
-        app:layout_constraintStart_toEndOf="@+id/portionsize"
-        app:layout_constraintTop_toBottomOf="@+id/speedOfService" />
+                android:layout_margin="8dp"/>
 
-    <Button
+            <Button
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/service"
+                style="@style/OutlinedButton"
+                android:text="Service"
+                android:layout_margin="8dp"/>
+        </LinearLayout>
+
+        <!-- Row 3 (2 buttons) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/hygiene"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                style="@style/OutlinedButton"
+                android:text="Hygiene"
+                android:layout_margin="8dp"/>
+
+            <Button
+                android:id="@+id/speed_of_service"
+                style="@style/OutlinedButton"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:text="Speed of Service"
+                android:layout_margin="8dp"/>
+        </LinearLayout>
+
+        <!-- Row 4 (2 buttons) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/portion_size"
+                style="@style/OutlinedButton"
+                android:text="Portion Size"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"/>
+
+            <Button
+                android:id="@+id/affordability"
+                style="@style/OutlinedButton"
+                android:text="Affordability"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"/>
+        </LinearLayout>
+
+        <!-- Row 5 (2 buttons) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/multi_cuisine"
+                style="@style/OutlinedButton"
+                android:text="Multi-Cuisine"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"/>
+
+            <Button
+                android:id="@+id/outdoor_seating"
+                style="@style/OutlinedButton"
+                android:text="Outdoor Seating"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"/>
+        </LinearLayout>
+
+        <!-- Row 6 (1 button) -->
+        <Button
+            android:id="@+id/beverage_selection"
+            style="@style/OutlinedButton"
+            android:text="Beverage Selection"
+            android:layout_margin="8dp"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"/>
+    </LinearLayout>
+
+
+    <!-- Next Button -->
+    <android.widget.Button
         android:id="@+id/next"
         android:layout_width="wrap_content"
-
         android:layout_height="wrap_content"
-        android:layout_marginEnd="68dp"
-        android:layout_marginBottom="85dp"
-        android:backgroundTint="@color/red"
-        android:text="next"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:paddingHorizontal="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="50dp"
+        android:layout_marginRight="50dp"
+        android:backgroundTint="@null"
+        android:background="@drawable/gradient_button"
+        android:textColor="@color/white"
+        android:textAllCaps="false"
+        android:text="Next >" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

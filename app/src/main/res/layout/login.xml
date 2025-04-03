@@ -90,7 +90,7 @@
         android:layout_height="wrap_content"
         android:text="Submit"
         android:textColor="@color/white"
-        android:backgroundTint="@color/dark_red"
+        android:backgroundTint="@color/red"
         android:layout_below="@id/passwordInput"
         android:layout_marginTop="50dp"/>
 

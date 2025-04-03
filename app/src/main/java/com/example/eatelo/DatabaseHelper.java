@@ -5,7 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.TextUtils;
+
+import androidx.annotation.Nullable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,12 +28,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_USERS = "users";
     private static final String TABLE_PREFERENCES = "preferences";
     private static final String TABLE_RANKINGS = "rankings";
+    private static final String TABLE_RESTAURANTS = "restaurants"; // New table
 
     // Users Table Columns
     private static final String COLUMN_USER_ID = "id";
     private static final String COLUMN_PHONE = "phone";
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_PASSWORD = "password";
+    private static final String COLUMN_BIO = "bio";
+    private static final String COLUMN_PROFILE_PIC = "profile_pic"; // Store as String (file path)
+
 
     // Preferences Table Columns
     private static final String COLUMN_PREFERENCE_ID = "id";
@@ -40,6 +48,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_RANKING_ID = "id";
     private static final String COLUMN_RESTAURANT_NAME = "restaurant_name";
     private static final String COLUMN_RANK = "rank";
+
+    // Restaurants Table Columns
+    private static final String COLUMN_RESTAURANT_ID = "id";
+    private static final String COLUMN_RESTAURANT_ELO = "elo";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -52,56 +64,151 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "phone TEXT UNIQUE, "
                 + "name TEXT, "
-                + "password TEXT)";
+                + "password TEXT, "
+                + "bio TEXT DEFAULT NULL, "
+                + "profile_pic TEXT DEFAULT NULL)";
         db.execSQL(createUsersTable);
 
-        // Create Preferences Table (Now Storing CSV)
+        // Create Preferences Table
         String createPreferencesTable = "CREATE TABLE preferences ("
                 + "user_id INTEGER PRIMARY KEY, "
                 + "preferences TEXT, "
                 + "FOREIGN KEY(user_id) REFERENCES users(id))";
         db.execSQL(createPreferencesTable);
 
-        // Create Rankings Table (Now Storing JSON)
+        // Create Rankings Table
         String createRankingsTable = "CREATE TABLE rankings ("
                 + "user_id INTEGER PRIMARY KEY, "
                 + "rankings TEXT, "
                 + "FOREIGN KEY(user_id) REFERENCES users(id))";
         db.execSQL(createRankingsTable);
+
+        // Create Restaurants Table
+        String createRestaurantsTable = "CREATE TABLE restaurants ("
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "restaurant_name TEXT UNIQUE, "
+                + "elo INTEGER DEFAULT 1500)";
+        db.execSQL(createRestaurantsTable);
+
+        // Prepopulate Restaurants
+        prepopulateRestaurants(db);
     }
 
+    private void prepopulateRestaurants(SQLiteDatabase db) {
+        String[] restaurants = {
+                "Eye of the Tiger", "Dollops", "Basil Cafe", "Country Inn", "Hadiqa",
+                "Saibas", "Snack Shack", "Madhuvan Serai", "Rolls Mania", "Bacchus Inn",
+                "Laughing Buddha", "The Belgian Waffle Co.", "Tiwari Chat", "Hungry House",
+                "Guzzlers Inn", "Hotel Manipal Restaurant", "Arabian Tasty", "Smoked BBQ Taxi",
+                "Kahani", "Mallika"
+        };
+
+        for (String restaurant : restaurants) {
+            ContentValues values = new ContentValues();
+            values.put("restaurant_name", restaurant);
+            values.put("elo", 1200);
+            db.insert(TABLE_RESTAURANTS, null, values);
+        }
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PREFERENCES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_RANKINGS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESTAURANTS);
         onCreate(db);
     }
 
-    // **Function to add a new user**
-    public long addUser(String phone, String name, String password) {
+    // Fetch all restaurant names from the database
+    public ArrayList<String> getAllRestaurants() {
+        ArrayList<String> restaurantList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT restaurant_name FROM restaurants", null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                restaurantList.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return restaurantList;
+    }
+
+
+
+    // Modify DatabaseHelper to store image path
+    public long addUser(String phone, String name, String password, String bio, String imagePath) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_PHONE, phone);
         values.put(COLUMN_NAME, name);
         values.put(COLUMN_PASSWORD, password);
 
+        if (bio != null && !bio.trim().isEmpty()) {
+            values.put(COLUMN_BIO, bio);
+        } else {
+            values.putNull(COLUMN_BIO);
+        }
+
+        if (imagePath != null && !imagePath.trim().isEmpty()) {
+            values.put(COLUMN_PROFILE_PIC, imagePath);
+        } else {
+            values.putNull(COLUMN_PROFILE_PIC); // Store NULL if no image selected
+        }
+
         long userId = db.insert(TABLE_USERS, null, values);
         db.close();
-        return userId; // Returns the user ID if successful, -1 if failed
+        return userId;
     }
+
+
+    public Bitmap getUserImage(String phone, Context context) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT profile_pic FROM users WHERE phone = ?", new String[]{phone});
+
+        Bitmap bitmap;
+        if (cursor.moveToFirst()) {
+            String imagePath = cursor.getString(0);
+            if (imagePath != null && !imagePath.isEmpty()) {
+                bitmap = BitmapFactory.decodeFile(imagePath); // Load user image
+            } else {
+                bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_profile_placeholder); // Load default image
+            }
+        } else {
+            bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_profile_placeholder);
+        }
+
+        cursor.close();
+        db.close();
+        return bitmap;
+    }
+
+    public String getUserBio(String phone) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT bio FROM " + TABLE_USERS + " WHERE phone = ?", new String[]{phone});
+
+        if (cursor.moveToFirst()) {
+            String bio = cursor.getString(0);
+            cursor.close();
+            return bio != null ? bio : "";  // Return empty string if bio is NULL
+        }
+
+        cursor.close();
+        return "";
+    }
+
 
     public boolean validateUser(String phone, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM users WHERE phone=? AND password=?", new String[]{phone, password});
 
-        boolean userExists = cursor.getCount() > 0; // If user exists, count > 0
+        boolean userExists = cursor.getCount() > 0;
         cursor.close();
         db.close();
         return userExists;
     }
-
 
     // **Function to add user preferences**
     public void addPreferences(long userId, ArrayList<String> preferences) {
@@ -115,8 +222,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insertWithOnConflict("preferences", null, values, SQLiteDatabase.CONFLICT_REPLACE);
         db.close();
     }
-
-
 
     // **Function to add user rankings**
     public void addRankings(long userId, ArrayList<String> rankedRestaurants) {
@@ -139,7 +244,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-
     public ArrayList<String> getPreferences(long userId) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT preferences FROM preferences WHERE user_id=?", new String[]{String.valueOf(userId)});
@@ -147,7 +251,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ArrayList<String> preferencesList = new ArrayList<>();
         if (cursor.moveToFirst()) {
             String preferencesString = cursor.getString(0);
-            preferencesList.addAll(Arrays.asList(preferencesString.split(","))); // Convert CSV back to List
+            preferencesList.addAll(Arrays.asList(preferencesString.split(",")));
         }
 
         cursor.close();
