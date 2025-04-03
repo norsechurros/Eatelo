@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="220dp"
+        android:layout_height="106dp"
+        android:layout_marginTop="-10dp"
+        android:layout_marginLeft="-40dp"
+        android:src="@drawable/logo" />
+
+
+    <View
+        android:id="@+id/rectangle"
+        android:layout_width="420dp"
+        android:layout_height="450dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="-100dp"
+        android:background="@drawable/rounded_rectangle"/>
+
+    <TextView
+        android:id="@+id/getStartedText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_above="@id/signInButton"
+        android:layout_marginBottom="50dp"
+        android:text="Get Started"
+        android:textColor="@color/white"
+        android:textSize="40sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/swipeUp"
+        android:layout_width="match_parent"
+        android:layout_height="269dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="370dp"
+        android:layout_marginHorizontal="10dp"
+        android:src="@drawable/food_getting_started" />
+
+    <Button
+        android:layout_centerHorizontal="true"
+        android:id="@+id/signInButton"
+        android:textSize="25dp"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginBottom="130dp"
+        android:backgroundTint="@color/dark_red"
+        android:text="Sign in" />
+
+    <Button
+        android:textSize="25dp"
+        android:padding="10dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginHorizontal="15dp"
+        android:id="@+id/createAccountButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/signInButton"
+        android:layout_marginTop="-120dp"
+        android:backgroundTint="@color/beige"
+        android:text="Create new account"
+        android:textColor="@color/black" />
+
+</RelativeLayout>
