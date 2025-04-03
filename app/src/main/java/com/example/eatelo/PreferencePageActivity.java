@@ -3,7 +3,6 @@ package com.example.eatelo;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -13,13 +12,19 @@ import java.util.ArrayList;
 
 public class PreferencePageActivity extends AppCompatActivity {
 
-    // Array to store selected preferences
     private final ArrayList<String> selectedPreferences = new ArrayList<>();
+    private String name, phone, password; // Store user details
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.preferences);
+
+        // Receive user details from SignupActivity
+        Intent intent = getIntent();
+        name = intent.getStringExtra("name");
+        phone = intent.getStringExtra("phone");
+        password = intent.getStringExtra("password");
 
         // Initialize buttons
         Button ambienceButton = findViewById(R.id.ambience);
@@ -44,20 +49,19 @@ public class PreferencePageActivity extends AppCompatActivity {
         setupPreferenceButton(portionSizeButton, "Portion Size");
         setupPreferenceButton(availabilityButton, "Availability");
 
-        // Set up click listener for the Next button
+        // Next button click listener
         nextButton.setOnClickListener(v -> {
             if (selectedPreferences.isEmpty()) {
                 Toast.makeText(this, "Please select at least one preference", Toast.LENGTH_SHORT).show();
             } else {
-                // Display selected preferences (or pass them to another activity)
-                Toast.makeText(this, "Selected Preferences: " + selectedPreferences, Toast.LENGTH_LONG).show();
+                // Move to RankingPageActivity with user data & preferences
+                Intent rankingIntent = new Intent(PreferencePageActivity.this, RankingPageActivity.class);
+                rankingIntent.putExtra("name", name);
+                rankingIntent.putExtra("phone", phone);
+                rankingIntent.putExtra("password", password);
+                rankingIntent.putStringArrayListExtra("preferences", selectedPreferences);
+                startActivity(rankingIntent);
             }
-
-            // Navigate to RankingPageActivity
-            Intent intent = new Intent(PreferencePageActivity.this, RankingPageActivity.class);
-            startActivity(intent);
-
-
         });
     }
 
@@ -67,11 +71,9 @@ public class PreferencePageActivity extends AppCompatActivity {
     private void setupPreferenceButton(Button button, String preference) {
         button.setOnClickListener(v -> {
             if (selectedPreferences.contains(preference)) {
-                // Deselect the button and remove preference
                 selectedPreferences.remove(preference);
                 button.setBackgroundColor(getResources().getColor(R.color.red)); // Original color
             } else {
-                // Select the button and add preference
                 selectedPreferences.add(preference);
                 button.setBackgroundColor(Color.GREEN); // Selected color
             }
