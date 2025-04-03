@@ -21,9 +21,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RankingPageActivity"/>
-        <!-- Preference Page Activity -->
+        <activity android:name=".GettingStarted"/>
+        <activity android:name=".LoginActivity"/>
         <activity android:name=".PreferencePageActivity" />
+        <activity android:name=".RankingPageActivity"/>
+        <activity android:name=".SignupActivity"/>
     </application>
 
 </manifest>
