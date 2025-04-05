@@ -49,6 +49,7 @@
         android:textColorHint="@color/list_grey"
         android:padding="10dp"
         android:textSize="18sp"
+        android:layout_marginTop="20dp"
         android:imeOptions="actionNext"/>
 
     <!-- Favorite Dish Input -->
@@ -65,6 +66,7 @@
         android:padding="10dp"
         android:textSize="16sp"
         android:gravity="top"
+        android:layout_marginTop="20dp"
         android:inputType="textMultiLine"/>
 
     <!-- Next Button -->
