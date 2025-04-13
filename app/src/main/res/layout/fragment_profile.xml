@@ -1,0 +1,132 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige">
+
+    <!-- Logo -->
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="220dp"
+        android:layout_height="106dp"
+        android:layout_marginTop="-10dp"
+        android:layout_marginLeft="-40dp"
+        android:src="@drawable/logo" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/logo"
+        android:layout_marginTop="-10dp"
+        android:layout_centerHorizontal="true"
+        android:text="Profile"
+        android:textSize="24sp"
+        android:textColor="@color/black"
+        android:textStyle="bold" />
+
+    <!-- Profile Picture -->
+    <ImageView
+        android:id="@+id/profileImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/title"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/ic_profile_placeholder"
+        android:contentDescription="Profile Picture"
+        android:scaleType="centerCrop"
+        android:background="@drawable/circle"
+        android:clipToOutline="true"/>
+
+    <TextView
+        android:id="@+id/tapToAddPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profileImage"
+        android:layout_centerHorizontal="true"
+        android:text="Tap to add photo"
+        android:textSize="14sp"
+        android:textColor="@color/black"/>
+
+    <!-- Name Input -->
+    <EditText
+        android:id="@+id/nameInput"
+        android:layout_marginTop="20dp"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tapToAddPhoto"
+        android:layout_centerHorizontal="true"
+        android:hint="Name"
+        android:background="@drawable/edittext_rounded"
+        android:textColor="@color/black"
+        android:textColorHint="@color/list_grey"
+        android:padding="10dp"
+        android:textSize="18sp"
+        android:imeOptions="actionNext"
+        android:gravity="center" />
+
+    <!-- Favorite Dish Input -->
+    <EditText
+        android:id="@+id/bioInput"
+        android:layout_marginTop="15dp"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_below="@id/nameInput"
+        android:layout_centerHorizontal="true"
+        android:hint="Write about your favourite dish..."
+        android:background="@drawable/edittext_rounded"
+        android:textColor="@color/black"
+        android:textColorHint="#666666"
+        android:padding="10dp"
+        android:textSize="16sp"
+        android:gravity="top"
+        android:inputType="textMultiLine"/>
+
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_below="@id/bioInput"
+    android:layout_marginTop="30dp"
+    android:layout_centerHorizontal="true"
+    >
+    <android.widget.Button
+        android:id="@+id/updateRankingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="10dp"
+        android:layout_marginHorizontal="5dp"
+
+        android:backgroundTint="@null"
+        android:background="@drawable/gradient_button"
+        android:textColor="@color/white"
+        android:textAllCaps="false"
+        android:text="Update Rankings" />
+    <android.widget.Button
+        android:id="@+id/updatePreferencesButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="10dp"
+        android:layout_marginHorizontal="5dp"
+
+        android:backgroundTint="@null"
+        android:background="@drawable/gradient_button"
+        android:textColor="@color/white"
+        android:textAllCaps="false"
+        android:text="Update Preferences" />
+</LinearLayout>
+    <!-- Next Button -->
+    <android.widget.Button
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+android:layout_centerHorizontal="true"
+        android:backgroundTint="@null"
+        android:background="@drawable/gradient_button"
+        android:textColor="@color/white"
+        android:textAllCaps="false"
+        android:text="Save Changes" />
+</RelativeLayout>

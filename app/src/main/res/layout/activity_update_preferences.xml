@@ -135,6 +135,6 @@
         android:background="@drawable/gradient_button"
         android:textColor="@color/white"
         android:textAllCaps="false"
-        android:text="Next >" />
+        android:text="Update Preferences" />
 
 </RelativeLayout>

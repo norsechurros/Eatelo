@@ -7,7 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -87,7 +90,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String createRestaurantsTable = "CREATE TABLE restaurants ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "restaurant_name TEXT UNIQUE, "
-                + "elo INTEGER DEFAULT 1500)";
+                + "elo INTEGER DEFAULT 1500, "
+                + "address TEXT)";
+
         db.execSQL(createRestaurantsTable);
 
         // Prepopulate Restaurants
@@ -95,21 +100,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void prepopulateRestaurants(SQLiteDatabase db) {
-        String[] restaurants = {
-                "Eye of the Tiger", "Dollops", "Basil Cafe", "Country Inn", "Hadiqa",
-                "Saibas", "Snack Shack", "Madhuvan Serai", "Rolls Mania", "Bacchus Inn",
-                "Laughing Buddha", "The Belgian Waffle Co.", "Tiwari Chat", "Hungry House",
-                "Guzzlers Inn", "Hotel Manipal Restaurant", "Arabian Tasty", "Smoked BBQ Taxi",
-                "Kahani", "Mallika"
+        String[][] restaurantData = {
+                {"Eye of the Tiger", "MIT Road, Manipal"},
+                {"Dollops", "End Point Road, Manipal"},
+                {"Basil Cafe", "KMC Greens, Manipal"},
+                {"Country Inn", "NH 169A, Manipal"},
+                {"Hadiqa", "Near MIT Backgate, Manipal"},
+                {"Saibas", "Indrali, Udupi"},
+                {"Snack Shack", "Tiger Circle, Manipal"},
+                {"Madhuvan Serai", "KMC Road, Manipal"},
+                {"Rolls Mania", "End Point Road, Manipal"},
+                {"Bacchus Inn", "End Point Road, Manipal"},
+                {"Laughing Buddha", "Kadiyali, Udupi"},
+                {"The Belgian Waffle Co.", "Tiger Circle, Manipal"},
+                {"Tiwari Chat", "Tiger Circle, Manipal"},
+                {"Hungry House", "Ananth Nagar, Manipal"},
+                {"Guzzlers Inn", "Tiger Circle, Manipal"},
+                {"Hotel Manipal Restaurant", "Main Road, Manipal"},
+                {"Arabian Tasty", "End Point Road, Manipal"},
+                {"Smoked BBQ Taxi", "End Point Road, Manipal"},
+                {"Kahani", "End Point Road, Manipal"},
+                {"Mallika", "Udupi Main Road"}
         };
 
-        for (String restaurant : restaurants) {
+        for (String[] data : restaurantData) {
             ContentValues values = new ContentValues();
-            values.put("restaurant_name", restaurant);
+            values.put("restaurant_name", data[0]);
             values.put("elo", 1200);
+            values.put("address", data[1]);
             db.insert(TABLE_RESTAURANTS, null, values);
         }
     }
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -119,6 +141,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESTAURANTS);
         onCreate(db);
     }
+
+    public ArrayList<String> getAllRestaurantsWithAddresses() {
+        ArrayList<String> restaurantList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT restaurant_name, address FROM restaurants", null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                String name = cursor.getString(0);
+                String address = cursor.getString(1);
+                restaurantList.add(name + " - " + address);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return restaurantList;
+    }
+
 
     // Fetch all restaurant names from the database
     public ArrayList<String> getAllRestaurants() {
@@ -162,28 +203,124 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return userId;
     }
+    public void updateUserProfile(String phone, String name, String bio) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NAME, name);
+        values.put(COLUMN_BIO, bio);
+        db.update(TABLE_USERS, values, "phone = ?", new String[]{phone});
+        db.close();
+    }
+
+    public String getUserName(String phone) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT name FROM users WHERE phone = ?", new String[]{phone});
+        String name = null;
+        if (cursor.moveToFirst()) {
+            name = cursor.getString(0);
+        }
+        cursor.close();
+        db.close();
+        return name;
+    }
+    public long getUserId(SQLiteDatabase db, String phone) {
+        long userId = -1;
+        Cursor cursor = db.rawQuery("SELECT id FROM users WHERE phone = ?", new String[]{phone});
+        if (cursor != null && cursor.moveToFirst()) {
+            userId = cursor.getLong(0);
+            cursor.close();
+        }
+        return userId;
+    }
+
+
+    public boolean updateUserPreferences(String phone, String updatedPreferences) {
+        SQLiteDatabase db = this.getWritableDatabase(); // Open database for write
+
+        // Get user ID first, pass db to getUserId
+        long userId = getUserId(db, phone);
+        if (userId == -1) {
+            Log.e("DB", "User not found for phone: " + phone);
+            db.close(); // Don't forget to close DB when done
+            return false;
+        }
+
+        ContentValues values = new ContentValues();
+        values.put("preferences", updatedPreferences);
+
+        int rowsAffected = db.update("preferences", values, "user_id = ?", new String[]{String.valueOf(userId)});
+
+        // Insert if no rows were affected
+        if (rowsAffected == 0) {
+            values.put("user_id", userId);
+            db.insert("preferences", null, values);
+        }
+
+        db.close(); // Close database after operation
+        return true; // Successfully updated
+    }
+
+
+
+    public void updateRankings(SQLiteDatabase db, long userId, ArrayList<String> rankedRestaurants) {
+        JSONObject rankingsJson = new JSONObject();
+        for (int i = 0; i < rankedRestaurants.size(); i++) {
+            try {
+                rankingsJson.put(rankedRestaurants.get(i), i + 1);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        ContentValues values = new ContentValues();
+        values.put("user_id", userId);
+        values.put("rankings", rankingsJson.toString());
+
+        int rowsAffected = db.update("rankings", values, "user_id = ?", new String[]{String.valueOf(userId)});
+
+        // Optional: Insert if no rows were affected
+        if (rowsAffected == 0) {
+            db.insert("rankings", null, values);
+        }
+    }
+
+    public int getRestaurantElo(String restaurantName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT elo FROM restaurants WHERE restaurant_name = ?", new String[]{restaurantName});
+
+        int elo = -1;
+        if (cursor.moveToFirst()) {
+            elo = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return elo;
+    }
 
 
     public Bitmap getUserImage(String phone, Context context) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT profile_pic FROM users WHERE phone = ?", new String[]{phone});
-
-        Bitmap bitmap;
         if (cursor.moveToFirst()) {
-            String imagePath = cursor.getString(0);
-            if (imagePath != null && !imagePath.isEmpty()) {
-                bitmap = BitmapFactory.decodeFile(imagePath); // Load user image
-            } else {
-                bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_profile_placeholder); // Load default image
-            }
-        } else {
-            bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_profile_placeholder);
-        }
+            String path = cursor.getString(0);  // can be either file path or content URI
+            cursor.close();
 
+            try {
+                if (path.startsWith("content://")) {
+                    return MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.parse(path));
+                } else {
+                    // Treat it as a file path
+                    return BitmapFactory.decodeFile(path);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_profile_placeholder); // fallback
+            }
+        }
         cursor.close();
-        db.close();
-        return bitmap;
+        return BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_profile_placeholder);
     }
+
 
     public String getUserBio(String phone) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -258,30 +395,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return preferencesList;
     }
-
-    public HashMap<String, Integer> getRankings(long userId) {
+    public long getUserIdFromPhone(String phone) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT rankings FROM rankings WHERE user_id=?", new String[]{String.valueOf(userId)});
-
-        HashMap<String, Integer> rankingsMap = new HashMap<>();
+        Cursor cursor = db.rawQuery("SELECT id FROM users WHERE phone = ?", new String[]{phone});
+        long userId = -1;
         if (cursor.moveToFirst()) {
-            try {
-                JSONObject rankingsJson = new JSONObject(cursor.getString(0));
-                Iterator<String> keys = rankingsJson.keys();
-                while (keys.hasNext()) {
-                    String restaurant = keys.next();
-                    rankingsMap.put(restaurant, rankingsJson.getInt(restaurant));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            userId = cursor.getLong(0);
         }
-
         cursor.close();
         db.close();
-        return rankingsMap;
+        return userId;
     }
 
+    public String getRankings(SQLiteDatabase db, long userId) {
+        Cursor cursor = db.rawQuery("SELECT rankings FROM rankings WHERE user_id = ?", new String[]{String.valueOf(userId)});
+        if (cursor.moveToFirst()) {
+            return cursor.getString(cursor.getColumnIndex("rankings"));
+        }
+        cursor.close();
+        return null; // Return null if rankings are not found
+    }
+    public Restaurant getRestaurantByName(SQLiteDatabase db, String restaurantName) {
+        Cursor cursor = db.rawQuery("SELECT restaurant_name, elo, address FROM restaurants WHERE restaurant_name = ?", new String[]{restaurantName});
+        if (cursor.moveToFirst()) {
+            String name = cursor.getString(cursor.getColumnIndex("restaurant_name"));
+            int elo = cursor.getInt(cursor.getColumnIndex("elo"));
+            String address = cursor.getString(cursor.getColumnIndex("address"));
+            cursor.close();
+            return new Restaurant(name, elo, address); // Return restaurant object
+        }
+        cursor.close();
+        return null; // Return null if restaurant not found
+    }
     // **Function to check if a user exists by phone**
     public boolean userExists(String phone) {
         SQLiteDatabase db = this.getReadableDatabase();

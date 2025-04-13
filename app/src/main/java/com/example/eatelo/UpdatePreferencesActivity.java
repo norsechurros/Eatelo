@@ -2,35 +2,30 @@ package com.example.eatelo;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 
-public class PreferencePageActivity extends AppCompatActivity {
+public class UpdatePreferencesActivity extends AppCompatActivity {
 
     private final ArrayList<String> selectedPreferences = new ArrayList<>();
-    private String name, phone, password; // Store user details
+    private String phone; // Phone number from intent
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.preferences);
-        Button nextButton = findViewById(R.id.next);
+        setContentView(R.layout.activity_update_preferences);
 
-
-        // Receive user details from SignupActivity
+        // Retrieve phone number from intent
         Intent intent = getIntent();
-        name = intent.getStringExtra("name");
         phone = intent.getStringExtra("phone");
-        password = intent.getStringExtra("password");
 
         // Initialize buttons
+        Button nextButton = findViewById(R.id.next);
         Button ambienceButton = findViewById(R.id.ambience);
         Button foodQualityButton = findViewById(R.id.food_quality);
         Button serviceButton = findViewById(R.id.service);
@@ -43,43 +38,41 @@ public class PreferencePageActivity extends AppCompatActivity {
         setupPreferenceButton(foodQualityButton, "Food Quality");
         setupPreferenceButton(serviceButton, "Service");
         setupPreferenceButton(hygieneButton, "Hygiene");
-        setupPreferenceButton(valueforMoneyButton, "Speed of Service");
+        setupPreferenceButton(valueforMoneyButton, "Value for Money");
         setupPreferenceButton(portionSizeButton, "Portion Size");
 
-        // Next button click listener
+        // Update preferences in database
         nextButton.setOnClickListener(v -> {
             if (selectedPreferences.isEmpty()) {
                 Toast.makeText(this, "Please select at least one preference", Toast.LENGTH_SHORT).show();
             } else {
-                // Move to ProfileActivity with user data & preferences
-                Intent rankingIntent = new Intent(PreferencePageActivity.this, ProfileActivity.class);
-                rankingIntent.putExtra("name", name);
-                rankingIntent.putExtra("phone", phone);
-                rankingIntent.putExtra("password", password);
-                rankingIntent.putStringArrayListExtra("preferences", selectedPreferences);
-                startActivity(rankingIntent);
+                String updatedPrefs = String.join(",", selectedPreferences);
+
+                DatabaseHelper dbHelper = new DatabaseHelper(this);
+                boolean success = dbHelper.updateUserPreferences(phone, updatedPrefs);
+
+                if (success) {
+                    Toast.makeText(this, "Preferences updated successfully", Toast.LENGTH_SHORT).show();
+                    finish(); // Return to previous screen
+                } else {
+                    Toast.makeText(this, "Failed to update preferences", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
 
-    /**
-     * Sets up a button to toggle selection and add/remove its text from the preferences array.
-     */
 
     private void setupPreferenceButton(Button button, String preference) {
         button.setOnClickListener(v -> {
             if (selectedPreferences.contains(preference)) {
                 selectedPreferences.remove(preference);
-                button.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.beige))); // Default color
-                button.setTextColor(Color.BLACK); // Change text color if needed
+                button.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.beige)));
+                button.setTextColor(getColor(R.color.black));
             } else {
                 selectedPreferences.add(preference);
-                button.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.accent_red))); // Selected color (Red example)
-                button.setTextColor(Color.WHITE); // Change text color for contrast
+                button.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.accent_red)));
+                button.setTextColor(getColor(R.color.white));
             }
         });
     }
-
-
-
 }
