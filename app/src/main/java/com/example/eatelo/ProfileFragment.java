@@ -63,6 +63,11 @@ public class ProfileFragment extends Fragment {
         saveChangesButton.setOnClickListener(v -> {
             String updatedName = nameEditText.getText().toString().trim();
             String updatedBio = bioEditText.getText().toString().trim();
+
+            if (updatedName.isEmpty()) {
+                Toast.makeText(requireContext(), "Please enter your name", Toast.LENGTH_SHORT).show();
+                return;
+            }
             dbHelper.updateUserProfile(userPhone, updatedName, updatedBio);
             Toast.makeText(requireContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show();
 

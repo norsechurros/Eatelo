@@ -93,8 +93,8 @@ public class RankingPageActivity extends AppCompatActivity {
 
         // Submit button to finalize ranking & store data
         submitButton.setOnClickListener(v -> {
-            if (rankedRestaurants.size() < 3) {
-                Toast.makeText(this, "Please rank at least 3 restaurants!", Toast.LENGTH_SHORT).show();
+            if (rankedRestaurants.size() < 10) {
+                Toast.makeText(this, "Please rank at least 10 restaurants!", Toast.LENGTH_SHORT).show();
             } else {
                 saveUserToDatabase();
             }
@@ -135,6 +135,16 @@ public class RankingPageActivity extends AppCompatActivity {
             Toast.makeText(this, "User added successfully!", Toast.LENGTH_SHORT).show();
             dbHelper.addPreferences(userId, preferences);
             dbHelper.addRankings(userId, rankedRestaurants);
+
+            Intent intent = new Intent(this, DashboardActivity.class);
+            intent.putExtra("phone", phone);
+
+            // Create a new task and clear everything
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+            // Start the new task
+            startActivity(intent);
+            finish();
         }
     }
 }

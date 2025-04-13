@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -222,6 +223,79 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return name;
     }
+    public long getUserId(SQLiteDatabase db, String phone) {
+        long userId = -1;
+        Cursor cursor = db.rawQuery("SELECT id FROM users WHERE phone = ?", new String[]{phone});
+        if (cursor != null && cursor.moveToFirst()) {
+            userId = cursor.getLong(0);
+            cursor.close();
+        }
+        return userId;
+    }
+
+
+    public boolean updateUserPreferences(String phone, String updatedPreferences) {
+        SQLiteDatabase db = this.getWritableDatabase(); // Open database for write
+
+        // Get user ID first, pass db to getUserId
+        long userId = getUserId(db, phone);
+        if (userId == -1) {
+            Log.e("DB", "User not found for phone: " + phone);
+            db.close(); // Don't forget to close DB when done
+            return false;
+        }
+
+        ContentValues values = new ContentValues();
+        values.put("preferences", updatedPreferences);
+
+        int rowsAffected = db.update("preferences", values, "user_id = ?", new String[]{String.valueOf(userId)});
+
+        // Insert if no rows were affected
+        if (rowsAffected == 0) {
+            values.put("user_id", userId);
+            db.insert("preferences", null, values);
+        }
+
+        db.close(); // Close database after operation
+        return true; // Successfully updated
+    }
+
+
+
+    public void updateRankings(SQLiteDatabase db, long userId, ArrayList<String> rankedRestaurants) {
+        JSONObject rankingsJson = new JSONObject();
+        for (int i = 0; i < rankedRestaurants.size(); i++) {
+            try {
+                rankingsJson.put(rankedRestaurants.get(i), i + 1);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        ContentValues values = new ContentValues();
+        values.put("user_id", userId);
+        values.put("rankings", rankingsJson.toString());
+
+        int rowsAffected = db.update("rankings", values, "user_id = ?", new String[]{String.valueOf(userId)});
+
+        // Optional: Insert if no rows were affected
+        if (rowsAffected == 0) {
+            db.insert("rankings", null, values);
+        }
+    }
+
+    public int getRestaurantElo(String restaurantName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT elo FROM restaurants WHERE restaurant_name = ?", new String[]{restaurantName});
+
+        int elo = -1;
+        if (cursor.moveToFirst()) {
+            elo = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return elo;
+    }
 
 
     public Bitmap getUserImage(String phone, Context context) {
@@ -333,29 +407,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return userId;
     }
 
-    public HashMap<String, Integer> getRankings(long userId) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT rankings FROM rankings WHERE user_id=?", new String[]{String.valueOf(userId)});
-
-        HashMap<String, Integer> rankingsMap = new HashMap<>();
+    public String getRankings(SQLiteDatabase db, long userId) {
+        Cursor cursor = db.rawQuery("SELECT rankings FROM rankings WHERE user_id = ?", new String[]{String.valueOf(userId)});
         if (cursor.moveToFirst()) {
-            try {
-                JSONObject rankingsJson = new JSONObject(cursor.getString(0));
-                Iterator<String> keys = rankingsJson.keys();
-                while (keys.hasNext()) {
-                    String restaurant = keys.next();
-                    rankingsMap.put(restaurant, rankingsJson.getInt(restaurant));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            return cursor.getString(cursor.getColumnIndex("rankings"));
         }
-
         cursor.close();
-        db.close();
-        return rankingsMap;
+        return null; // Return null if rankings are not found
     }
-
+    public Restaurant getRestaurantByName(SQLiteDatabase db, String restaurantName) {
+        Cursor cursor = db.rawQuery("SELECT restaurant_name, elo, address FROM restaurants WHERE restaurant_name = ?", new String[]{restaurantName});
+        if (cursor.moveToFirst()) {
+            String name = cursor.getString(cursor.getColumnIndex("restaurant_name"));
+            int elo = cursor.getInt(cursor.getColumnIndex("elo"));
+            String address = cursor.getString(cursor.getColumnIndex("address"));
+            cursor.close();
+            return new Restaurant(name, elo, address); // Return restaurant object
+        }
+        cursor.close();
+        return null; // Return null if restaurant not found
+    }
     // **Function to check if a user exists by phone**
     public boolean userExists(String phone) {
         SQLiteDatabase db = this.getReadableDatabase();

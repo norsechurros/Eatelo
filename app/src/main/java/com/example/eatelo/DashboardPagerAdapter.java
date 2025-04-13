@@ -21,8 +21,20 @@ public class DashboardPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        if (position == 0) return new RecommendationsFragment();
-        else if (position == 1) return new TopRestaurantsFragment();
+        if (position == 0) {
+            RecommendationsFragment recommendationsFragment = new RecommendationsFragment();
+            Bundle args = new Bundle();
+            args.putString("phone", userPhone);
+            recommendationsFragment.setArguments(args);
+            return recommendationsFragment;
+        }
+        else if (position == 1) {
+            TopRestaurantsFragment topRestaurantsFragment = new TopRestaurantsFragment();
+            Bundle args = new Bundle();
+            args.putString("phone", userPhone);
+            topRestaurantsFragment.setArguments(args);
+            return topRestaurantsFragment;
+        }
         else {
             // Pass phone number to ProfileFragment
             ProfileFragment profileFragment = new ProfileFragment();
@@ -37,5 +49,16 @@ public class DashboardPagerAdapter extends FragmentStateAdapter {
     public int getItemCount() {
         return 3;
     }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public boolean containsItem(long itemId) {
+        return false; // This forces all fragments to be recreated
+    }
+
 }
 

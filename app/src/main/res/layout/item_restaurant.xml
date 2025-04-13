@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/item_background_gradient"
+    android:padding="16dp"
+    android:layout_marginHorizontal="15dp"
+    android:layout_marginTop="15dp"
+    >
+
+    <!-- Restaurant Name -->
+    <TextView
+        android:id="@+id/restaurantName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Restaurant Name"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#000"/>
+
+    <!-- Restaurant Address -->
+    <TextView
+        android:id="@+id/restaurantAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Restaurant Address"
+        android:textSize="14sp"
+        android:layout_below="@id/restaurantName"
+        android:textColor="#555"/>
+
+    <!-- Restaurant ELO Rating -->
+    <TextView
+        android:id="@+id/restaurantELO"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ELO: 1500"
+        android:textSize="14sp"
+        android:layout_below="@id/restaurantAddress"
+        android:textColor="#000"/>
+
+</RelativeLayout>

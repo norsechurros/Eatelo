@@ -1,10 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UpdatePreferencesActivity">
+    android:background="@color/beige">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="220dp"
+        android:layout_height="106dp"
+        android:layout_marginTop="-10dp"
+        android:layout_marginLeft="-40dp"
+        android:src="@drawable/logo" />
+
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/logo"
+        android:layout_marginTop="55dp"
+        android:layout_centerHorizontal="true"
+        android:text="Tailor Your Experience"
+        android:textSize="24sp"
+        android:textColor="@color/black"
+        android:textStyle="bold" />
+
+    <!-- Subtitle -->
+    <TextView
+        android:id="@+id/subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        android:text="What do you look the most in a restaurant?"
+        android:textSize="14sp"
+        android:textColor="@color/black" />
+
+    <LinearLayout
+        android:id="@+id/preferences_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/subtitle"
+        android:layout_marginTop="45dp"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <!-- Row 1 (2 buttons) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/ambience"
+                style="@style/OutlinedButton"
+                android:layout_height="wrap_content"
+                android:layout_width="114dp"
+                android:layout_margin="8dp"
+                android:text="Ambience" />
+
+            <Button
+                android:id="@+id/food_quality"
+                style="@style/OutlinedButton"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Food Quality" />
+        </LinearLayout>
+
+        <!-- Row 2 (3 buttons) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/portion_size"
+                style="@style/OutlinedButton"
+                android:text="Portion Size"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"/>
+
+            <Button
+                android:id="@+id/hygiene"
+                style="@style/OutlinedButton"
+                android:text="Hygiene"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+
+                android:layout_margin="8dp"/>
+
+
+        </LinearLayout>
+
+        <!-- Row 3 (2 buttons) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/service"
+                style="@style/OutlinedButton"
+                android:text="Service"
+                android:layout_margin="8dp"/>
+            <Button
+                android:id="@+id/value_for_money"
+                style="@style/OutlinedButton"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:text="Value for Money"
+                android:layout_margin="8dp"/>
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <!-- Next Button -->
+    <android.widget.Button
+        android:id="@+id/next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="50dp"
+        android:layout_marginRight="50dp"
+        android:backgroundTint="@null"
+        android:background="@drawable/gradient_button"
+        android:textColor="@color/white"
+        android:textAllCaps="false"
+        android:text="Update Preferences" />
+
+</RelativeLayout>

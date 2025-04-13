@@ -1,5 +1,6 @@
 package com.example.eatelo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -32,7 +33,7 @@ public class DashboardActivity extends AppCompatActivity {
         // Initialize pagerAdapter with user phone
         pagerAdapter = new DashboardPagerAdapter(this, userPhone);
         viewPager.setAdapter(pagerAdapter);
-
+        viewPager.setCurrentItem(1, false); // Index 1 = My Rankings
         bottomNav.setSelectedItemId(R.id.nav_top);
 
         bottomNav.setOnItemSelectedListener(item -> {
@@ -57,5 +58,15 @@ public class DashboardActivity extends AppCompatActivity {
                 else if (position == 2) bottomNav.setSelectedItemId(R.id.nav_profile);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Go back to GettingStartedActivity when back is pressed
+        super.onBackPressed();
+        Intent intent = new Intent(this, GettingStarted.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 }
