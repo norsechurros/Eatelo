@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/logo"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="55dp"
         android:layout_centerHorizontal="true"
         android:text="Tailor Your Experience"
         android:textSize="24sp"
@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/title"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
         android:text="What do you look the most in a restaurant?"
         android:textSize="14sp"
@@ -43,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/subtitle"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="45dp"
         android:orientation="vertical"
         android:gravity="center">
 
@@ -77,30 +77,23 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/price"
+                android:id="@+id/portion_size"
                 style="@style/OutlinedButton"
-                android:text="Price"
-                android:layout_width="90dp"
+                android:text="Portion Size"
+                android:layout_width="130dp"
                 android:layout_height="wrap_content"
-
                 android:layout_margin="8dp"/>
 
             <Button
-                android:id="@+id/location"
+                android:id="@+id/hygiene"
                 style="@style/OutlinedButton"
-                android:text="Location"
+                android:text="Hygiene"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
 
                 android:layout_margin="8dp"/>
 
-            <Button
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/service"
-                style="@style/OutlinedButton"
-                android:text="Service"
-                android:layout_margin="8dp"/>
+
         </LinearLayout>
 
         <!-- Row 3 (2 buttons) -->
@@ -108,79 +101,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
             <Button
-                android:id="@+id/hygiene"
-                android:layout_width="110dp"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
+                android:id="@+id/service"
                 style="@style/OutlinedButton"
-                android:text="Hygiene"
+                android:text="Service"
                 android:layout_margin="8dp"/>
-
             <Button
-                android:id="@+id/speed_of_service"
+                android:id="@+id/value_for_money"
                 style="@style/OutlinedButton"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
-                android:text="Speed of Service"
+                android:text="Value for Money"
                 android:layout_margin="8dp"/>
         </LinearLayout>
 
-        <!-- Row 4 (2 buttons) -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/portion_size"
-                style="@style/OutlinedButton"
-                android:text="Portion Size"
-                android:layout_width="140dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"/>
-
-            <Button
-                android:id="@+id/affordability"
-                style="@style/OutlinedButton"
-                android:text="Affordability"
-                android:layout_width="140dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"/>
-        </LinearLayout>
-
-        <!-- Row 5 (2 buttons) -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/multi_cuisine"
-                style="@style/OutlinedButton"
-                android:text="Multi-Cuisine"
-                android:layout_width="140dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"/>
-
-            <Button
-                android:id="@+id/outdoor_seating"
-                style="@style/OutlinedButton"
-                android:text="Outdoor Seating"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"/>
-        </LinearLayout>
-
-        <!-- Row 6 (1 button) -->
-        <Button
-            android:id="@+id/beverage_selection"
-            style="@style/OutlinedButton"
-            android:text="Beverage Selection"
-            android:layout_margin="8dp"
-            android:layout_width="180dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"/>
     </LinearLayout>
 
 

@@ -46,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
 
             // Open DashboardActivity
             Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-            intent.putExtra("phone", phone); // Pass user data if needed
+            intent.putExtra("phone", phone);
             startActivity(intent);
             finish(); // Close LoginActivity
         } else {

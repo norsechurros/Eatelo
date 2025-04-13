@@ -15,12 +15,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Eatelo"
         tools:targetApi="31">
+        <activity
+            android:name=".UpdateRankingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UpdatePreferencesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DashboardActivity"
+            android:windowSoftInputMode="adjustNothing" />
 
-        <activity android:name=".ProfileActivity" android:exported="false" />
-        <activity android:name=".DashboardActivity" android:exported="false" android:theme="@style/Theme.Eatelo" />
-        <activity android:name=".MainActivity" android:exported="true">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

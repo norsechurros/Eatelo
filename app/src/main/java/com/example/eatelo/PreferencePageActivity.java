@@ -33,30 +33,18 @@ public class PreferencePageActivity extends AppCompatActivity {
         // Initialize buttons
         Button ambienceButton = findViewById(R.id.ambience);
         Button foodQualityButton = findViewById(R.id.food_quality);
-        Button priceButton = findViewById(R.id.price);
-        Button locationButton = findViewById(R.id.location);
         Button serviceButton = findViewById(R.id.service);
         Button hygieneButton = findViewById(R.id.hygiene);
-        Button speedOfServiceButton = findViewById(R.id.speed_of_service);
+        Button valueforMoneyButton = findViewById(R.id.value_for_money);
         Button portionSizeButton = findViewById(R.id.portion_size);
-        Button affordabilityButton = findViewById(R.id.affordability);
-        Button multiCuisineButton = findViewById(R.id.multi_cuisine);
-        Button outdoorSeatingButton = findViewById(R.id.outdoor_seating);
-        Button beverageSelectionButton = findViewById(R.id.beverage_selection);
 
         // Set up click listeners for all preference buttons
         setupPreferenceButton(ambienceButton, "Ambience");
         setupPreferenceButton(foodQualityButton, "Food Quality");
-        setupPreferenceButton(priceButton, "Price");
-        setupPreferenceButton(locationButton, "Location");
         setupPreferenceButton(serviceButton, "Service");
         setupPreferenceButton(hygieneButton, "Hygiene");
-        setupPreferenceButton(speedOfServiceButton, "Speed of Service");
+        setupPreferenceButton(valueforMoneyButton, "Speed of Service");
         setupPreferenceButton(portionSizeButton, "Portion Size");
-        setupPreferenceButton(affordabilityButton, "Affordability");
-        setupPreferenceButton(multiCuisineButton, "Multi-Cuisine");
-        setupPreferenceButton(outdoorSeatingButton, "Outdoor Seating");
-        setupPreferenceButton(beverageSelectionButton, "Beverage Selection");
 
         // Next button click listener
         nextButton.setOnClickListener(v -> {
