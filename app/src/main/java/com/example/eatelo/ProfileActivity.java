@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -26,6 +27,8 @@ public class ProfileActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 1;
     private static final int CAPTURE_IMAGE = 2;
     private static final int CAMERA_PERMISSION_CODE = 100;
+    private static final int MAX_NAME_LENGTH = 20;
+    private static final int MAX_BIO_LENGTH = 40;
 
     private ImageView profileImage;
     private EditText nameInput, bioInput;
@@ -39,11 +42,19 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        initializeViews();
+        getIntentData();
+        setupClickListeners();
+    }
+
+    private void initializeViews() {
         profileImage = findViewById(R.id.profileImage);
         nameInput = findViewById(R.id.nameInput);
         bioInput = findViewById(R.id.bioInput);
         nextButton = findViewById(R.id.nextButton);
+    }
 
+    private void getIntentData() {
         Intent intent = getIntent();
         name = intent.getStringExtra("name");
         phone = intent.getStringExtra("phone");
@@ -53,30 +64,56 @@ public class ProfileActivity extends AppCompatActivity {
         if (name != null && !name.isEmpty()) {
             nameInput.setText(name);
         }
+    }
 
-        // Image selection
+    private void setupClickListeners() {
         profileImage.setOnClickListener(v -> showImagePickDialog());
 
         nextButton.setOnClickListener(v -> {
-            name = nameInput.getText().toString().trim();
-            bio = bioInput.getText().toString().trim();
-
-            if (name.isEmpty()) {
-                Toast.makeText(this, "Please enter your name", Toast.LENGTH_SHORT).show();
-                return;
+            if (validateInputs()) {
+                proceedToRanking();
             }
-
-            String imageUriString = (imageUri != null) ? imageUri.toString() : null;
-
-            Intent rankingIntent = new Intent(ProfileActivity.this, RankingPageActivity.class);
-            rankingIntent.putExtra("name", name);
-            rankingIntent.putExtra("phone", phone);
-            rankingIntent.putExtra("password", password);
-            rankingIntent.putExtra("bio", bio);
-            rankingIntent.putStringArrayListExtra("preferences", preferences);
-            rankingIntent.putExtra("profileImageUri", imageUriString);
-            startActivity(rankingIntent);
         });
+    }
+
+    private boolean validateInputs() {
+        name = nameInput.getText().toString().trim();
+        bio = bioInput.getText().toString().trim();
+
+        if (name.isEmpty()) {
+            showToast("Please enter your name");
+            return false;
+        }
+
+        if (name.length() > MAX_NAME_LENGTH) {
+            showToast("Name should not exceed " + MAX_NAME_LENGTH + " characters");
+            return false;
+        }
+
+        if (!name.matches("[a-zA-Z ]+")) {
+            showToast("Name should contain only letters and spaces");
+            return false;
+        }
+
+        if (bio.length() > MAX_BIO_LENGTH) {
+            showToast("Bio should not exceed " + MAX_BIO_LENGTH + " characters");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void proceedToRanking() {
+        String imageUriString = (imageUri != null) ? imageUri.toString() : null;
+
+        Intent rankingIntent = new Intent(this, RankingPageActivity.class);
+        rankingIntent.putExtra("name", name);
+        rankingIntent.putExtra("phone", phone);
+        rankingIntent.putExtra("password", password);
+        rankingIntent.putExtra("bio", bio);
+        rankingIntent.putStringArrayListExtra("preferences", preferences);
+        rankingIntent.putExtra("profileImageUri", imageUriString);
+        startActivity(rankingIntent);
     }
 
     private void showImagePickDialog() {
@@ -85,54 +122,68 @@ public class ProfileActivity extends AppCompatActivity {
                 .setTitle("Select Profile Picture")
                 .setItems(options, (dialog, which) -> {
                     if (which == 0) {
-                        // Camera
-                        if (checkCameraPermission()) {
-                            openCamera();
-                        } else {
-                            requestCameraPermission();
-                        }
+                        handleCameraOption();
                     } else {
-                        // Gallery
-                        Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        startActivityForResult(pickPhoto, PICK_IMAGE);
+                        handleGalleryOption();
                     }
                 })
                 .show();
     }
 
+    private void handleCameraOption() {
+        if (checkCameraPermission()) {
+            openCamera();
+        } else {
+            requestCameraPermission();
+        }
+    }
+
+    private void handleGalleryOption() {
+        Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        pickPhoto.setType("image/*");
+        startActivityForResult(pickPhoto, PICK_IMAGE);
+    }
+
     private boolean checkCameraPermission() {
-        int cam = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-        int storage = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        return cam == PackageManager.PERMISSION_GRANTED && storage == PackageManager.PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestCameraPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{
-                Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-        }, CAMERA_PERMISSION_CODE);
+        ActivityCompat.requestPermissions(this,
+                new String[]{
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                },
+                CAMERA_PERMISSION_CODE);
     }
 
     private void openCamera() {
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, "New Picture");
-        values.put(MediaStore.Images.Media.DESCRIPTION, "From Camera");
-        imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        try {
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.TITLE, "Profile Picture");
+            values.put(MediaStore.Images.Media.DESCRIPTION, "Taken from camera");
+            imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-        startActivityForResult(cameraIntent, CAPTURE_IMAGE);
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            startActivityForResult(cameraIntent, CAPTURE_IMAGE);
+        } catch (Exception e) {
+            showToast("Failed to open camera");
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CAMERA_PERMISSION_CODE) {
-            if (grantResults.length > 0 &&
+            if (grantResults.length > 1 &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED &&
                     grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 openCamera();
             } else {
-                Toast.makeText(this, "Camera & Storage permissions are required", Toast.LENGTH_SHORT).show();
+                showToast("Camera & Storage permissions are required");
             }
         }
     }
@@ -146,11 +197,19 @@ public class ProfileActivity extends AppCompatActivity {
                 if (requestCode == PICK_IMAGE && data != null) {
                     imageUri = data.getData();
                 }
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-                profileImage.setImageBitmap(bitmap);
+
+                if (imageUri != null) {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                    profileImage.setImageBitmap(bitmap);
+                }
             } catch (Exception e) {
+                showToast("Failed to load image");
                 e.printStackTrace();
             }
         }
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }
