@@ -1,9 +1,11 @@
 package com.example.eatelo;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,12 +19,17 @@ import java.util.ArrayList;
 
 public class RankingPageActivity extends AppCompatActivity {
 
+    // UI Components
     private ListView listView;
     private EditText searchBar;
     private Button submitButton;
     private RecyclerView rankedRecyclerView;
+
+    // Adapters
     private RankedRestaurantsAdapter rankedAdapter;
     private ArrayAdapter<String> adapter;
+
+    // Data
     private ArrayList<String> rankedRestaurants = new ArrayList<>();
     private ArrayList<String> restaurantList = new ArrayList<>();
     private String name, phone, password, bio, profileImageUri;
@@ -34,117 +41,144 @@ public class RankingPageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ranking_page);
 
-        // Retrieve user data from Intent
+        // Initialize UI and data
+        initViews();
+        loadIntentData();
+        setupRecyclerView();
+        setupListView();
+        setupSearch();
+    }
+
+    private void initViews() {
+        searchBar = findViewById(R.id.searchBar);
+        listView = findViewById(R.id.listView);
+        rankedRecyclerView = findViewById(R.id.rankedListView);
+        submitButton = findViewById(R.id.submitButton);
+
+        submitButton.setOnClickListener(v -> validateAndSubmit());
+    }
+
+    private void loadIntentData() {
         Intent intent = getIntent();
         name = intent.getStringExtra("name");
         phone = intent.getStringExtra("phone");
         bio = intent.getStringExtra("bio");
         password = intent.getStringExtra("password");
         preferences = intent.getStringArrayListExtra("preferences");
-        profileImageUri = getIntent().getStringExtra("profileImageUri");
+        profileImageUri = intent.getStringExtra("profileImageUri");
+    }
 
-        // Initialize views
-        searchBar = findViewById(R.id.searchBar);
-        listView = findViewById(R.id.listView);
-        rankedRecyclerView = findViewById(R.id.rankedListView);
-        submitButton = findViewById(R.id.submitButton);
-
-        // Load restaurant data from the database
-        loadRestaurantData();
-
-        // Initialize RecyclerView for ranked restaurants
+    private void setupRecyclerView() {
         rankedRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        rankedAdapter = new RankedRestaurantsAdapter(this, rankedRestaurants,
+                viewHolder -> itemTouchHelper.startDrag(viewHolder));
 
-        rankedAdapter = new RankedRestaurantsAdapter(this, rankedRestaurants, viewHolder -> {
-            itemTouchHelper.startDrag(viewHolder);
-        });
-
-
-
-        rankedRecyclerView.setAdapter(rankedAdapter);
-
-        // Setup ItemTouchHelper for drag and drop
-        ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
+        ItemTouchHelper.Callback callback = new ItemTouchHelper.SimpleCallback(
+                ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
             @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            public boolean onMove(RecyclerView recyclerView,
+                                  RecyclerView.ViewHolder viewHolder,
+                                  RecyclerView.ViewHolder target) {
                 rankedAdapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
                 return true;
             }
-
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {}
         };
 
         itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(rankedRecyclerView);
+        rankedRecyclerView.setAdapter(rankedAdapter);
+    }
 
-        // Handle item clicks for ranking
+    private void setupListView() {
+        loadRestaurantData();
         listView.setOnItemClickListener((parent, view, position, id) -> {
-            String selectedRestaurant = adapter.getItem(position); // Use filtered list
+            String selectedRestaurant = adapter.getItem(position);
             if (!rankedRestaurants.contains(selectedRestaurant)) {
                 if (rankedRestaurants.size() < 10) {
                     rankedRestaurants.add(selectedRestaurant);
                     rankedAdapter.notifyDataSetChanged();
                 } else {
-                    Toast.makeText(this, "You can only rank up to 10 restaurants!", Toast.LENGTH_SHORT).show();
+                    showToast("You can only rank up to 10 restaurants!");
                 }
             }
         });
+    }
 
-        // Submit button to finalize ranking & store data
-        submitButton.setOnClickListener(v -> {
-            if (rankedRestaurants.size() < 10) {
-                Toast.makeText(this, "Please rank at least 10 restaurants!", Toast.LENGTH_SHORT).show();
-            } else {
-                saveUserToDatabase();
-            }
-        });
-
-        // Implement Search Functionality
+    private void setupSearch() {
         searchBar.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.getFilter().filter(s);  // Filter list based on input
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.getFilter().filter(s);
             }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
+            @Override public void afterTextChanged(Editable s) {}
         });
     }
 
-    // Load restaurant data from the database
     private void loadRestaurantData() {
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        DatabaseHelper dbHelper = DatabaseHelper.getInstance(this);
         restaurantList = dbHelper.getAllRestaurants();
-
-        // Initialize adapter and set it to ListView
         adapter = new ArrayAdapter<>(this, R.layout.list_item_restaurant, restaurantList);
         listView.setAdapter(adapter);
     }
 
-    // Save user info, preferences, and rankings to the database
-    private void saveUserToDatabase() {
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
-        long userId = dbHelper.addUser(phone, name, password, bio, profileImageUri);
-        if (userId == -1) {
-            Toast.makeText(this, "Error: User not added!", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "User added successfully!", Toast.LENGTH_SHORT).show();
-            dbHelper.addPreferences(userId, preferences);
-            dbHelper.addRankings(userId, rankedRestaurants);
-
-            Intent intent = new Intent(this, DashboardActivity.class);
-            intent.putExtra("phone", phone);
-
-            // Create a new task and clear everything
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-            // Start the new task
-            startActivity(intent);
-            finish();
+    private void validateAndSubmit() {
+        if (rankedRestaurants.size() < 10) {
+            showToast("Please rank at least 10 restaurants!");
+            return;
         }
+        saveUserToDatabase();
+    }
+
+    private void saveUserToDatabase() {
+        DatabaseHelper dbHelper = DatabaseHelper.getInstance(this);
+        SQLiteDatabase db = null;
+
+        try {
+            db = dbHelper.getWritableDatabase();
+            db.beginTransaction();
+
+            long userId = dbHelper.addUser(db, phone, name, password, bio, profileImageUri);
+            if (userId == -1) {
+                showToast("Error: User not added!");
+                return;
+            }
+
+            // Save all user data in transaction
+            dbHelper.addPreferences(db, userId, preferences);
+            dbHelper.addRankings(db, userId, rankedRestaurants);
+            dbHelper.applyNewRanking(db, userId, rankedRestaurants);
+
+            db.setTransactionSuccessful();
+            showToast("User added successfully!");
+            launchDashboard();
+
+        } catch (Exception e) {
+            Log.e("Database", "Error saving user", e);
+            showToast("Error saving data!");
+        } finally {
+            if (db != null) {
+                try {
+                    if (db.inTransaction()) {
+                        db.endTransaction();
+                    }
+                } catch (Exception e) {
+                    Log.e("Database", "Error ending transaction", e);
+                }
+            }
+        }
+    }
+
+    private void launchDashboard() {
+        Intent intent = new Intent(this, DashboardActivity.class)
+                .putExtra("phone", phone)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

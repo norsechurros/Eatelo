@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class RecommendationsFragment extends Fragment {
@@ -20,84 +21,99 @@ public class RecommendationsFragment extends Fragment {
     private List<Restaurant> restaurantList;
     private TextView tvName;
     private String phone;
+    private DatabaseHelper dbHelper;
 
     public RecommendationsFragment() {
         // Required empty public constructor
+    }
+
+    public static RecommendationsFragment newInstance(String phone) {
+        RecommendationsFragment fragment = new RecommendationsFragment();
+        Bundle args = new Bundle();
+        args.putString("phone", phone);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        dbHelper = DatabaseHelper.getInstance(requireContext());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recommendations, container, false);
-
-        // Get phone from arguments safely
-        phone = getArguments() != null ? getArguments().getString("phone") : null;
-
-        tvName = view.findViewById(R.id.tvname);
-        recyclerView = view.findViewById(R.id.recyclerViewTopRestaurants);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        // Set user name from DB
-        if (phone != null) {
-            String userName = getUserNameFromDatabase(phone);
-            tvName.setText(userName);
-        }
-
-        fetchTopRestaurants();
-        adapter = new RestaurantAdapter2(restaurantList);
-        recyclerView.setAdapter(adapter);
-
+        initViews(view);
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        phone = getArguments() != null ? getArguments().getString("phone") : null;
+        refreshData();
+    }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // No need to close dbHelper - singleton manages its own lifecycle
+    }
+
+    private void initViews(View view) {
+        tvName = view.findViewById(R.id.tvname);
+        recyclerView = view.findViewById(R.id.recyclerViewTopRestaurants);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        phone = getArguments() != null ? getArguments().getString("phone") : null;
+        refreshData();
+    }
+
+    private void refreshData() {
         if (phone != null) {
             String userName = getUserNameFromDatabase(phone);
-            tvName.setText(userName);
+            tvName.setText(userName != null ? userName : "User");
         }
-
         fetchTopRestaurants();
         adapter = new RestaurantAdapter2(restaurantList);
         recyclerView.setAdapter(adapter);
     }
 
     private String getUserNameFromDatabase(String phone) {
-        DatabaseHelper dbHelper = new DatabaseHelper(getContext());
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        try (Cursor cursor = dbHelper.getReadableDatabase().query(
+                DatabaseHelper.TABLE_USERS,
+                new String[]{DatabaseHelper.COLUMN_NAME},
+                DatabaseHelper.COLUMN_PHONE + " = ?",
+                new String[]{phone},
+                null, null, null)) {
 
-        String name = "User";
-        Cursor cursor = db.rawQuery("SELECT name FROM users WHERE phone = ?", new String[]{phone});
-        if (cursor.moveToFirst()) {
-            name = cursor.getString(0);
+            if (cursor.moveToFirst()) {
+                return cursor.getString(0);
+            }
         }
-
-        cursor.close();
-        db.close();
-        return name;
+        return null;
     }
 
     private void fetchTopRestaurants() {
-        DatabaseHelper dbHelper = new DatabaseHelper(getContext());
-        List<Restaurant> topRestaurants = new ArrayList<>();
+        restaurantList = new ArrayList<>();
+        try (Cursor cursor = dbHelper.getReadableDatabase().query(
+                DatabaseHelper.TABLE_RESTAURANTS,
+                new String[]{
+                        DatabaseHelper.COLUMN_RESTAURANT_NAME,
+                        DatabaseHelper.COLUMN_RESTAURANT_ELO,
+                        DatabaseHelper.COLUMN_ADDRESS
+                },
+                null, null, null, null,
+                DatabaseHelper.COLUMN_RESTAURANT_ELO + " DESC")) {
 
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT restaurant_name, elo, address FROM restaurants", null);
-        if (cursor.moveToFirst()) {
-            do {
-                String name = cursor.getString(0);
-                int elo = cursor.getInt(1);
-                String address = cursor.getString(2);
-                topRestaurants.add(new Restaurant(name, elo, address));
-            } while (cursor.moveToNext());
+            while (cursor.moveToNext()) {
+                restaurantList.add(new Restaurant(
+                        cursor.getString(0),
+                        cursor.getInt(1),
+                        cursor.getString(2)
+                ));
+            }
         }
-
-        cursor.close();
-        db.close();
-        topRestaurants.sort((r1, r2) -> Integer.compare(r2.getElo(), r1.getElo()));
-        restaurantList = topRestaurants;
     }
 }

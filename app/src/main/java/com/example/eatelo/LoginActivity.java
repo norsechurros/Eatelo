@@ -1,7 +1,6 @@
 package com.example.eatelo;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -19,8 +18,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-        // Initialize database helper
-        dbHelper = new DatabaseHelper(this);
+        // Initialize database helper using singleton pattern
+        dbHelper = DatabaseHelper.getInstance(this);
 
         // Initialize UI elements
         phoneInput = findViewById(R.id.phoneInput);
@@ -29,6 +28,12 @@ public class LoginActivity extends AppCompatActivity {
 
         // Handle login button click
         loginButton.setOnClickListener(v -> loginUser());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // No need to close dbHelper here - singleton manages its own lifecycle
     }
 
     private void loginUser() {
@@ -43,12 +48,10 @@ public class LoginActivity extends AppCompatActivity {
         // Check user credentials in database
         if (dbHelper.validateUser(phone, password)) {
             Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
-
-            // Open DashboardActivity
-            Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+            Intent intent = new Intent(this, DashboardActivity.class);
             intent.putExtra("phone", phone);
             startActivity(intent);
-            finish(); // Close LoginActivity
+            finish();
         } else {
             Toast.makeText(this, "Invalid credentials!", Toast.LENGTH_SHORT).show();
         }
